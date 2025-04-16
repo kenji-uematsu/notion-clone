@@ -1,32 +1,96 @@
 .sidebar {
-    width: 250px;
-    background-color: #f4f4f4;
-    height: 100vh;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  background-color: #f4f4f4;
+  height: 100vh;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-item {
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .sidebar-item:hover {
-    background-color: #e0e0e0;
+  background-color: #e0e0e0;
 }
 
 .sidebar-header {
-    font-size: 1.5em;
-    margin-bottom: 20px;
-    font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  font-weight: bold;
 }
 
 .sidebar-footer {
-    margin-top: auto;
-    text-align: center;
-    font-size: 0.9em;
-    color: #888;
+  margin-top: auto;
+  text-align: center;
+  font-size: 0.9em;
+  color: #888;
+}
+
+.user-info {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  pointer-events: auto;
+}
+
+.user-email {
+  font-size: 0.9rem;
+  color: #555;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 既存のログアウトボタンスタイルを更新 */
+.logout-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #2e78c5; /* ログインボタンと同じ青色 */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 0.75rem;
+  transition: background-color 0.2s;
+  text-align: center;
+}
+
+.logout-button:hover {
+  background-color: #236aaf; /* ホバー時に少し暗い青色 */
+}
+
+.logout-button:active {
+  background-color: #1b5085; /* クリック時にさらに暗い色 */
+}
+
+/* セレクタの具体性を高める */
+.sidebar .user-info .logout-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #2e78c5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 0.75rem;
+  transition: background-color 0.2s;
+  text-align: center;
+  position: relative;
+  z-index: 5;
+}
+
+.sidebar .user-info .logout-button:hover {
+  background-color: #236aaf;
+  cursor: pointer;
+}
+
+.sidebar .user-info .logout-button:active {
+  background-color: #1b5085;
 }

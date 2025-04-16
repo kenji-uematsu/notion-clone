@@ -1,13 +1,12 @@
 .app {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+}
+
+.home-container {
+  width: 100%;
 }
 
 .main-content {
   display: flex;
-  flex: 1;
-  overflow: hidden;
 }
 
 /* サイドバーとメインコンテンツのレイアウト */
@@ -18,14 +17,6 @@
   overflow-y: auto;
 }
 
-/* レスポンシブデザイン */
-@media (max-width: 768px) {
-  .main-content {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    height: auto;
-  }
+.editor-textarea {
+  width: 100%;
 }
