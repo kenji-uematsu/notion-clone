@@ -1,0 +1,31 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* サイドバーとメインコンテンツのレイアウト */
+.sidebar {
+  width: 250px;
+  background-color: #f5f5f5;
+  border-right: 1px solid #e0e0e0;
+  overflow-y: auto;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+  }
+}

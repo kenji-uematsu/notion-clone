@@ -1,0 +1,41 @@
+.editor {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 16px;
+    min-height: 400px;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+}
+
+.editor:focus {
+    outline: none;
+    background-color: #fff;
+}
+
+.editor-toolbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.editor-toolbar button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.editor-toolbar button:hover {
+    background-color: #0056b3;
+}
+
+.editor-content {
+    min-height: 300px;
+    line-height: 1.5;
+    overflow-y: auto;
+}
