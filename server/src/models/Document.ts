@@ -1,36 +1,77 @@
-import { Schema, model, Document as MongooseDocument } from 'mongoose';
+import { Model, DataTypes, Optional } from "sequelize";
+import sequelize from "../config/database";
+import User from "./User";
 
-export interface IDocument extends MongooseDocument {
-    title: string;
-    content: string;
-    createdAt: Date;
-    updatedAt: Date;
+// ドキュメントの属性を定義
+interface DocumentAttributes {
+  id: number;
+  title: string;
+  content: string;
+  userId: number; // ユーザーとの関連付け
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const DocumentSchema = new Schema<IDocument>({
+// 作成時に省略可能な属性（自動生成される項目）
+interface DocumentCreationAttributes
+  extends Optional<DocumentAttributes, "id" | "createdAt" | "updatedAt"> {}
+
+// Documentモデルのクラス
+class Document
+  extends Model<DocumentAttributes, DocumentCreationAttributes>
+  implements DocumentAttributes
+{
+  public id!: number;
+  public title!: string;
+  public content!: string;
+  public userId!: number;
+  public createdAt!: Date;
+  public updatedAt!: Date;
+}
+
+// Sequelizeモデルの初期化
+Document.init(
+  {
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     title: {
-        type: String,
-        required: true,
+      type: DataTypes.STRING(255),
+      allowNull: false,
     },
     content: {
-        type: String,
-        required: true,
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    userId: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      references: {
+        model: User,
+        key: "id",
+      },
     },
     createdAt: {
-        type: Date,
-        default: Date.now,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
     updatedAt: {
-        type: Date,
-        default: Date.now,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
-});
+  },
+  {
+    sequelize,
+    modelName: "Document",
+  }
+);
 
-DocumentSchema.pre<IDocument>('save', function (next) {
-    this.updatedAt = new Date();
-    next();
+// リレーションシップの設定
+Document.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
 });
-
-const Document = model<IDocument>('Document', DocumentSchema);
 
 export default Document;

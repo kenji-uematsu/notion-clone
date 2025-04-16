@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
 import documentRoutes from "./routes/documentRoutes";
-import workspaceRoutes from "./routes/workspaceRoutes";
 import errorHandler from "./middleware/errorHandler";
 import { config } from "dotenv";
 import sequelize from "./config/database";
@@ -19,7 +18,6 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/documents", documentRoutes);
-app.use("/api/workspaces", workspaceRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

@@ -1,62 +1,124 @@
-import { Request, Response } from 'express';
-import Document from '../models/Document';
+import { Request, Response } from "express";
+import Document from "../models/Document";
 
-// Create a new document
+// ドキュメントを新規作成
 export const createDocument = async (req: Request, res: Response) => {
-    try {
-        const newDocument = new Document(req.body);
-        const savedDocument = await newDocument.save();
-        res.status(201).json(savedDocument);
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating document', error });
-    }
+  try {
+    const { title, content } = req.body;
+
+    // Sequelize方式でドキュメントを作成
+    const newDocument = await Document.create({
+      title,
+      content,
+      userId: req.user.id, // MySQLではuserIdフィールドを使用
+    });
+
+    res.status(201).json(newDocument);
+  } catch (error) {
+    console.error("ドキュメント作成エラー:", error);
+    res.status(500).json({ message: "サーバーエラーが発生しました" });
+  }
 };
 
-// Get all documents
+// ユーザーの全ドキュメントを取得
 export const getDocuments = async (req: Request, res: Response) => {
-    try {
-        const documents = await Document.find();
-        res.status(200).json(documents);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching documents', error });
+  try {
+    // ユーザーが認証されているか確認
+    if (!req.user) {
+      return res.status(401).json({ message: "認証が必要です" });
     }
+
+    // Sequelize方式でクエリ
+    const documents = await Document.findAll({
+      where: {
+        userId: req.user.id,
+      },
+      order: [["updatedAt", "DESC"]], // 最新更新順
+    });
+
+    res.status(200).json(documents);
+  } catch (error) {
+    console.error("ドキュメント取得エラー:", error);
+    res.status(500).json({ message: "サーバーエラーが発生しました" });
+  }
 };
 
-// Get a document by ID
+// IDによるドキュメント取得
 export const getDocumentById = async (req: Request, res: Response) => {
-    try {
-        const document = await Document.findById(req.params.id);
-        if (!document) {
-            return res.status(404).json({ message: 'Document not found' });
-        }
-        res.status(200).json(document);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching document', error });
+  try {
+    // findByPkを使用して主キーで検索
+    const document = await Document.findByPk(req.params.id);
+
+    if (!document) {
+      return res.status(404).json({ message: "ドキュメントが見つかりません" });
     }
+
+    // ドキュメント所有者の確認 (セキュリティ対策)
+    if (document.userId !== req.user.id) {
+      return res.status(403).json({ message: "アクセス権限がありません" });
+    }
+
+    res.status(200).json(document);
+  } catch (error) {
+    console.error("ドキュメント取得エラー:", error);
+    res
+      .status(500)
+      .json({ message: "ドキュメント取得中にエラーが発生しました" });
+  }
 };
 
-// Update a document by ID
+// ドキュメントの更新
 export const updateDocument = async (req: Request, res: Response) => {
-    try {
-        const updatedDocument = await Document.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedDocument) {
-            return res.status(404).json({ message: 'Document not found' });
-        }
-        res.status(200).json(updatedDocument);
-    } catch (error) {
-        res.status(500).json({ message: 'Error updating document', error });
+  try {
+    // まず対象ドキュメントを取得
+    const document = await Document.findByPk(req.params.id);
+
+    if (!document) {
+      return res.status(404).json({ message: "ドキュメントが見つかりません" });
     }
+
+    // ドキュメント所有者の確認 (セキュリティ対策)
+    if (document.userId !== req.user.id) {
+      return res.status(403).json({ message: "アクセス権限がありません" });
+    }
+
+    // updateメソッドで更新
+    await document.update(req.body);
+
+    // 更新後のドキュメントを取得して返す
+    const updatedDocument = await Document.findByPk(req.params.id);
+    res.status(200).json(updatedDocument);
+  } catch (error) {
+    console.error("ドキュメント更新エラー:", error);
+    res
+      .status(500)
+      .json({ message: "ドキュメント更新中にエラーが発生しました" });
+  }
 };
 
-// Delete a document by ID
+// ドキュメントの削除
 export const deleteDocument = async (req: Request, res: Response) => {
-    try {
-        const deletedDocument = await Document.findByIdAndDelete(req.params.id);
-        if (!deletedDocument) {
-            return res.status(404).json({ message: 'Document not found' });
-        }
-        res.status(200).json({ message: 'Document deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error deleting document', error });
+  try {
+    // まず対象ドキュメントを取得
+    const document = await Document.findByPk(req.params.id);
+
+    if (!document) {
+      return res.status(404).json({ message: "ドキュメントが見つかりません" });
     }
+
+    // ドキュメント所有者の確認 (セキュリティ対策)
+    if (document.userId !== req.user.id) {
+      return res.status(403).json({ message: "アクセス権限がありません" });
+    }
+
+    // destroyメソッドで削除
+    await document.destroy();
+
+    res.status(200).json({ message: "ドキュメントが正常に削除されました" });
+  } catch (error) {
+    console.error("ドキュメント削除エラー:", error);
+    res
+      .status(500)
+      .json({ message: "ドキュメント削除中にエラーが発生しました" });
+  }
 };

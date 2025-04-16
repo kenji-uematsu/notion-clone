@@ -1,58 +1,25 @@
-import axios from "axios";
+import axios, { AxiosError, isAxiosError } from "axios";
 
 const API_BASE_URL = `http://localhost:${
   process.env.REACT_APP_API_PORT || "3001"
-}/api`; // バックエンドのAPIベースURL
+}/api`;
 
-// タスクを取得する関数
-export const fetchTasks = async () => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/tasks`);
-    return response.data;
-  } catch (error) {
-    throw new Error("タスクの取得に失敗しました");
-  }
-};
+// 認証付きAxiosインスタンスの作成
+const authAxios = axios.create({
+  baseURL: API_BASE_URL,
+});
 
-// タスク型の定義
-interface Task {
-  title: string;
-  description?: string;
-  completed?: boolean;
-  [key: string]: any;
-}
-
-// タスクを作成する関数
-export const createTask = async (taskData: Task) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}/tasks`, taskData);
-    return response.data;
-  } catch (error) {
-    throw new Error("タスクの作成に失敗しました");
-  }
-};
-
-// タスクを更新する関数
-export const updateTask = async (taskId: string, taskData: Task) => {
-  try {
-    const response = await axios.put(
-      `${API_BASE_URL}/tasks/${taskId}`,
-      taskData
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error("タスクの更新に失敗しました");
-  }
-};
-
-// タスクを削除する関数
-export const deleteTask = async (taskId: string) => {
-  try {
-    await axios.delete(`${API_BASE_URL}/tasks/${taskId}`);
-  } catch (error) {
-    throw new Error("タスクの削除に失敗しました");
-  }
-};
+// リクエストインターセプターでトークンを自動的に追加
+authAxios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 // 認証関連のAPI
 export const loginUser = async (credentials: {
@@ -89,9 +56,10 @@ export const registerUser = async (userData: {
 // ドキュメント関連のAPI
 export const fetchDocuments = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/documents`);
+    const response = await authAxios.get("/documents");
     return response.data;
   } catch (error) {
+    console.error("ドキュメント取得エラー:", error);
     throw new Error("ドキュメントの取得に失敗しました");
   }
 };
@@ -104,12 +72,10 @@ interface Document {
 
 export const createDocument = async (documentData: Document) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}/documents`,
-      documentData
-    );
+    const response = await authAxios.post("/documents", documentData);
     return response.data;
   } catch (error) {
+    console.error("ドキュメント作成エラー:", error);
     throw new Error("ドキュメントの作成に失敗しました");
   }
 };
@@ -119,8 +85,8 @@ export const updateDocument = async (
   documentData: Document
 ) => {
   try {
-    const response = await axios.put(
-      `${API_BASE_URL}/documents/${documentId}`,
+    const response = await authAxios.put(
+      `/documents/${documentId}`,
       documentData
     );
     return response.data;
@@ -131,7 +97,7 @@ export const updateDocument = async (
 
 export const deleteDocument = async (documentId: string) => {
   try {
-    await axios.delete(`${API_BASE_URL}/documents/${documentId}`);
+    await authAxios.delete(`/documents/${documentId}`);
   } catch (error) {
     throw new Error("ドキュメントの削除に失敗しました");
   }
@@ -140,7 +106,7 @@ export const deleteDocument = async (documentId: string) => {
 // 単一のドキュメントを取得する関数
 export const fetchDocument = async (documentId: string) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/documents/${documentId}`);
+    const response = await authAxios.get(`/documents/${documentId}`);
     return response.data;
   } catch (error) {
     throw new Error("ドキュメントの取得に失敗しました");
@@ -150,107 +116,51 @@ export const fetchDocument = async (documentId: string) => {
 // ドキュメントを保存する関数（updateDocumentのエイリアス）
 export const saveDocument = async (document: Document & { id: string }) => {
   try {
-    const response = await axios.put(
-      `${API_BASE_URL}/documents/${document.id}`,
-      document
-    );
+    const response = await authAxios.put(`/documents/${document.id}`, document);
     return response.data;
   } catch (error) {
     throw new Error("ドキュメントの保存に失敗しました");
   }
 };
 
-// ワークスペース関連のAPI
-export const fetchWorkspaces = async () => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/workspaces`);
-    return response.data;
-  } catch (error) {
-    throw new Error("ワークスペースの取得に失敗しました");
-  }
-};
-
-export const fetchWorkspace = async (workspaceId: string) => {
-  try {
-    const response = await axios.get(
-      `${API_BASE_URL}/workspaces/${workspaceId}`
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error("ワークスペースの取得に失敗しました");
-  }
-};
-
-interface Workspace {
-  name: string;
-  description?: string;
-  [key: string]: any;
-}
-
-export const createWorkspace = async (workspaceData: Workspace) => {
-  try {
-    const response = await axios.post(
-      `${API_BASE_URL}/workspaces`,
-      workspaceData
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error("ワークスペースの作成に失敗しました");
-  }
-};
-
-export const updateWorkspace = async (
-  workspaceId: string,
-  workspaceData: Workspace
-) => {
-  try {
-    const response = await axios.put(
-      `${API_BASE_URL}/workspaces/${workspaceId}`,
-      workspaceData
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error("ワークスペースの更新に失敗しました");
-  }
-};
-
-export const deleteWorkspace = async (workspaceId: string) => {
-  try {
-    await axios.delete(`${API_BASE_URL}/workspaces/${workspaceId}`);
-  } catch (error) {
-    throw new Error("ワークスペースの削除に失敗しました");
-  }
-};
-
+// 認証関連のAPIオブジェクト
 export const api = {
   getCurrentUser: async () => {
     try {
-      // 保存されたトークンを取得
-      const token = localStorage.getItem("authToken");
-      if (!token) return null;
-
-      // トークンを使用してユーザー情報を取得
-      const response = await axios.get(`${API_BASE_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await authAxios.get("/auth/me");
       return response.data;
     } catch (error) {
-      console.error("ユーザー情報取得エラー:", error);
-      localStorage.removeItem("authToken"); // 無効なトークンをクリア
+      // 型アサーションではなく型チェックを使用
+      if (isAxiosError(error)) {
+        if (error.response) {
+          console.error(
+            "サーバーエラー:",
+            error.response.status,
+            error.response.data
+          );
+        } else if (error.request) {
+          console.error("レスポンスなし:", error.request);
+        }
+      } else {
+        console.error("リクエストエラー:", error);
+      }
+      localStorage.removeItem("authToken");
       return null;
     }
   },
 
   login: async (email: string, password: string) => {
     try {
+      // ログインだけは通常のaxiosを使用（トークンがまだない）
       const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         email,
         password,
       });
-      // トークンを保存
-      if (response.data.token) {
+
+      if (response.data && response.data.token) {
         localStorage.setItem("authToken", response.data.token);
       }
+
       return response.data.user;
     } catch (error) {
       console.error("ログインエラー:", error);
@@ -260,11 +170,9 @@ export const api = {
 
   signup: async (email: string, password: string) => {
     try {
-      // nameフィールドを削除、emailとpasswordのみ送信
       const response = await axios.post(`${API_BASE_URL}/auth/register`, {
         email,
         password,
-        // nameフィールドを削除
       });
 
       if (response.data.token) {

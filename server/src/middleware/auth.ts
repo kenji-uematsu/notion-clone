@@ -4,6 +4,15 @@ import User from "../models/User";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
+// Requestインターフェースを拡張してuserプロパティを追加
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any; // 実際のUserモデルの型に合わせて調整
+    }
+  }
+}
+
 export const authenticateToken = async (
   req: Request,
   res: Response,
@@ -22,7 +31,6 @@ export const authenticateToken = async (
       return res.status(404).json({ message: "ユーザーが見つかりません" });
     }
 
-    // @ts-ignore - userプロパティを追加
     req.user = user;
     next();
   } catch (error) {
