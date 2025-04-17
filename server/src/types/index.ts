@@ -1,15 +1,14 @@
 export interface User {
-  id: string;
-  name: string;
+  id: number;
   email: string;
   password: string;
 }
 
 export interface Document {
-  id: string;
+  id: number;
   title: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
-  userId: string;
+  userId: number;
 }

@@ -17,10 +17,7 @@ interface DocumentCreationAttributes
   extends Optional<DocumentAttributes, "id" | "createdAt" | "updatedAt"> {}
 
 // Documentモデルのクラス
-class Document
-  extends Model<DocumentAttributes, DocumentCreationAttributes>
-  implements DocumentAttributes
-{
+class Document extends Model<DocumentAttributes, DocumentCreationAttributes> {
   public id!: number;
   public title!: string;
   public content!: string;

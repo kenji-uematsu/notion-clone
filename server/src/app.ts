@@ -24,7 +24,7 @@ app.use(errorHandler);
 
 // Database connection
 sequelize
-  .sync() // この関数は必要に応じてテーブルを作成する
+  .sync()
   .then(() => {
     console.log("Database synchronized");
     app.listen(PORT, () => {
