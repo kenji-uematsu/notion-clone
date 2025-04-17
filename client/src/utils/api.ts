@@ -21,6 +21,15 @@ authAxios.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+export interface Document {
+  id: number | string;
+  title: string;
+  content: string;
+  userId: number | string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // 認証関連のAPI
 export const loginUser = async (credentials: {
   email: string;
@@ -40,7 +49,6 @@ export const loginUser = async (credentials: {
 export const registerUser = async (userData: {
   email: string;
   password: string;
-  name?: string;
 }) => {
   try {
     const response = await axios.post(
@@ -64,13 +72,7 @@ export const fetchDocuments = async () => {
   }
 };
 
-interface Document {
-  title: string;
-  content?: any;
-  [key: string]: any;
-}
-
-export const createDocument = async (documentData: Document) => {
+export const createDocument = async (documentData: Partial<Document>) => {
   try {
     const response = await authAxios.post("/documents", documentData);
     return response.data;
@@ -81,8 +83,8 @@ export const createDocument = async (documentData: Document) => {
 };
 
 export const updateDocument = async (
-  documentId: string,
-  documentData: Document
+  documentId: string | number,
+  documentData: Partial<Document>
 ) => {
   try {
     const response = await authAxios.put(
@@ -91,11 +93,12 @@ export const updateDocument = async (
     );
     return response.data;
   } catch (error) {
+    console.error("ドキュメント更新エラー:", error);
     throw new Error("ドキュメントの更新に失敗しました");
   }
 };
 
-export const deleteDocument = async (documentId: string) => {
+export const deleteDocument = async (documentId: string | number) => {
   try {
     await authAxios.delete(`/documents/${documentId}`);
   } catch (error) {
@@ -104,25 +107,20 @@ export const deleteDocument = async (documentId: string) => {
   }
 };
 
-// 単一のドキュメントを取得する関数
 export const fetchDocument = async (id: string | number) => {
   try {
     const response = await authAxios.get(`/documents/${id}`);
     return response.data;
   } catch (error) {
-    console.error("API呼び出しエラー:", error);
+    console.error("ドキュメント取得エラー:", error);
     throw new Error("ドキュメント取得に失敗しました");
   }
 };
 
-// ドキュメントを保存する関数（updateDocumentのエイリアス）
-export const saveDocument = async (document: Document & { id: string }) => {
-  try {
-    const response = await authAxios.put(`/documents/${document.id}`, document);
-    return response.data;
-  } catch (error) {
-    throw new Error("ドキュメントの保存に失敗しました");
-  }
+export const saveDocument = async (
+  document: Partial<Document> & { id: string | number }
+) => {
+  return updateDocument(document.id, document);
 };
 
 // 認証関連のAPIオブジェクト
@@ -132,7 +130,6 @@ export const api = {
       const response = await authAxios.get("/auth/me");
       return response.data;
     } catch (error) {
-      // 型アサーションではなく型チェックを使用
       if (isAxiosError(error)) {
         if (error.response) {
           console.error(
@@ -153,7 +150,6 @@ export const api = {
 
   login: async (email: string, password: string) => {
     try {
-      // ログインだけは通常のaxiosを使用（トークンがまだない）
       const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         email,
         password,

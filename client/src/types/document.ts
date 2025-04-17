@@ -1,8 +1,8 @@
 export default interface DocumentModel {
-  id: string;
+  id: string | number;
   title: string;
   content: string;
-  createdAt: Date;
-  updatedAt: Date;
-  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  userId: number;
 }
