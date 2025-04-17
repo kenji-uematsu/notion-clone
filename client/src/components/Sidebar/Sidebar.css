@@ -1,9 +1,9 @@
 .sidebar {
-  width: 250px;
-  background-color: #f4f4f4;
-  height: 100vh;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  background-color: #f5f5f5;
+  border-right: 1px solid #e0e0e0;
+  overflow-y: auto;
+  padding: 10px;
 }
 
 .sidebar-item {
@@ -48,9 +48,9 @@
 
 /* 既存のログアウトボタンスタイルを更新 */
 .logout-button {
-  width: 100%;
+  /* width: 100%;
   padding: 0.75rem;
-  background-color: #2e78c5; /* ログインボタンと同じ青色 */
+  background-color: #2e78c5; 
   color: white;
   border: none;
   border-radius: 4px;
@@ -58,7 +58,7 @@
   cursor: pointer;
   margin-top: 0.75rem;
   transition: background-color 0.2s;
-  text-align: center;
+  text-align: center; */
 }
 
 .logout-button:hover {
@@ -84,6 +84,10 @@
   text-align: center;
   position: relative;
   z-index: 5;
+  display: flex;
+  column-gap: 8px;
+  justify-content: center;
+  align-items: center;
 }
 
 .sidebar .user-info .logout-button:hover {
@@ -93,4 +97,72 @@
 
 .sidebar .user-info .logout-button:active {
   background-color: #1b5085;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 4px 0;
+}
+
+.section-header h3 {
+  margin: 0;
+  color: #777;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  color: #777;
+  padding: 4px;
+  z-index: 10;
+}
+
+.icon-button:hover {
+  background-color: #e0e0e0;
+}
+
+.icon-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.document-list {
+  margin-bottom: 16px;
+}
+
+.document-item {
+  padding: 6px 8px;
+  border-radius: 3px;
+  margin-bottom: 2px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #37352f;
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.document-item:hover {
+  background-color: rgba(55, 53, 47, 0.08);
+}
+
+.document-item.active {
+  background-color: rgba(55, 53, 47, 0.16);
+  font-weight: 500;
+}
+
+.empty-message {
+  padding: 6px 8px;
+  font-size: 13px;
+  color: #999;
+  font-style: italic;
 }

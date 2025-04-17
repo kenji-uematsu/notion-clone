@@ -3,6 +3,7 @@ import { authenticateToken } from "../middleware/auth";
 import {
   createDocument,
   getDocuments,
+  getDocumentById,
   updateDocument,
   deleteDocument,
 } from "../controllers/documentController";
@@ -17,6 +18,9 @@ router.post("/", createDocument);
 
 // Get all documents
 router.get("/", getDocuments);
+
+// Get a document by ID
+router.get("/:id", getDocumentById);
 
 // Update a document by ID
 router.put("/:id", updateDocument);

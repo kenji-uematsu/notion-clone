@@ -25,7 +25,9 @@ const Login: React.FC = () => {
 
     try {
       await login(email, password);
-      navigate("/"); // 認証成功時にトップ画面へリダイレクト
+      // 認証成功時にトップ画面へリダイレクト
+      // Home.tsxで最新ドキュメントを自動的に読み込む
+      navigate("/");
     } catch (err) {
       console.error("Login error:", err);
       if (mounted.current) {

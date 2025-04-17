@@ -104,12 +104,13 @@ export const deleteDocument = async (documentId: string) => {
 };
 
 // 単一のドキュメントを取得する関数
-export const fetchDocument = async (documentId: string) => {
+export const fetchDocument = async (id: string | number) => {
   try {
-    const response = await authAxios.get(`/documents/${documentId}`);
+    const response = await authAxios.get(`/documents/${id}`);
     return response.data;
   } catch (error) {
-    throw new Error("ドキュメントの取得に失敗しました");
+    console.error("API呼び出しエラー:", error);
+    throw new Error("ドキュメント取得に失敗しました");
   }
 };
 

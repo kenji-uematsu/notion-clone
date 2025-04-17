@@ -30,7 +30,7 @@ export const register = async (req: Request, res: Response) => {
     const user = await User.create({ email, password });
 
     // JWTトークンを生成
-    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "24h" });
 
     res.status(201).json({ user, token });
   } catch (error: unknown) {
@@ -64,7 +64,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // JWTトークンを生成
-    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "24h" });
 
     res.status(200).json({ user, token });
   } catch (error) {
