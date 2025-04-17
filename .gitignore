@@ -29,8 +29,14 @@ logs/
 
 # キャッシュ
 .cache/
-.eslintcache
 .npm/
+
+# ESLint
+.eslintcache
+*/.eslintcache
+*/*/.eslintcache
+node_modules/.cache/
+**/node_modules/.cache/
 
 # エディタ設定
 .idea/
