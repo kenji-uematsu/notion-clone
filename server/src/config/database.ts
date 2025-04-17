@@ -11,7 +11,13 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST || "localhost",
     dialect: "mysql",
     port: parseInt(process.env.DB_PORT || "3306"),
-    logging: false,
+    // 開発環境の場合のみログを表示
+    logging: process.env.NODE_ENV === "development" ? console.log : false,
+    // 日本語（絵文字含む）をサポート
+    define: {
+      charset: "utf8mb4",
+      collate: "utf8mb4_general_ci",
+    },
   }
 );
 
