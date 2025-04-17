@@ -21,7 +21,6 @@ const Sidebar: React.FC<SidebarProps> = ({ documents, refreshDocuments }) => {
   // 新規ドキュメント作成処理を修正
   const handleCreateDocument = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log("クリックされました");
 
     if (isCreatingDoc) return;
 

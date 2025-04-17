@@ -189,6 +189,5 @@ export const api = {
 
   logout: () => {
     localStorage.removeItem("authToken");
-    console.log("ログアウトしました");
   },
 };

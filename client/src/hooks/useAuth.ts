@@ -41,9 +41,7 @@ export const useAuthState = () => {
 
   const signup = async (email: string, password: string) => {
     try {
-      console.log("Attempting signup with:", { email, password });
       const newUser = await api.signup(email, password);
-      console.log("Signup response:", newUser);
       setUser(newUser);
       return newUser;
     } catch (error) {

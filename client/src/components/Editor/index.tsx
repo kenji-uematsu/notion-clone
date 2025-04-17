@@ -37,10 +37,8 @@ const Editor: React.FC<EditorProps> = ({ documentId, onDocumentChange }) => {
 
       try {
         if (isMounted.current) setLoading(true);
-        console.log("ドキュメント読み込み開始:", currentDocId);
 
         const doc = await fetchDocument(currentDocId);
-        console.log("取得したドキュメント:", doc);
 
         if (isMounted.current && doc) {
           setTitle(doc.title || "");
@@ -113,8 +111,6 @@ const Editor: React.FC<EditorProps> = ({ documentId, onDocumentChange }) => {
         if (isMounted.current) setSaveStatus("削除中...");
 
         await deleteDocument(currentDocId);
-
-        console.log("ドキュメント削除完了:", currentDocId);
 
         if (onDocumentChange) {
           await onDocumentChange();
