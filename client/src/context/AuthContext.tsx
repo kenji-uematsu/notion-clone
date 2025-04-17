@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import User from "../types/user";
 
 interface AuthContextType {
-  user: any | null;
+  user: User | null;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, username: string) => Promise<void>;
   logout: () => void;
@@ -12,7 +13,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   const login = async (email: string, password: string) => {
     // ログイン処理

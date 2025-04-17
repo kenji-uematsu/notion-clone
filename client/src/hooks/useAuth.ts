@@ -4,8 +4,8 @@ import User from "../types/user";
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<any>;
-  signup: (email: string, password: string) => Promise<any>;
+  login: (email: string, password: string) => Promise<User>;
+  signup: (email: string, password: string) => Promise<User>;
   logout: () => void;
 }
 
@@ -23,9 +23,8 @@ export const AuthContext = createContext<AuthContextType>({
   },
 });
 
-// カスタムフックとしての認証状態管理
 export const useAuthState = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -35,9 +34,10 @@ export const useAuthState = () => {
     fetchUser();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<User> => {
     const loggedInUser = await api.login(email, password);
     setUser(loggedInUser);
+    return loggedInUser;
   };
 
   const signup = async (email: string, password: string) => {
@@ -47,7 +47,7 @@ export const useAuthState = () => {
       return newUser;
     } catch (error) {
       console.error("Signup error:", error);
-      throw error; // エラーを再スローして呼び出し元でキャッチできるようにする
+      throw error;
     }
   };
 

@@ -6,10 +6,11 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AddIcon from "@material-ui/icons/Add";
 import { createDocument } from "../../utils/api";
 import { useAuth } from "../../hooks/useAuth"; // 追加：認証フックをインポート
+import DocumentModel from "../../types/document";
 
 interface SidebarProps {
-  documents: any[]; // 親から渡されるドキュメントリスト
-  refreshDocuments: () => Promise<any[]>;
+  documents: DocumentModel[]; // 親から渡されるドキュメントリスト
+  refreshDocuments: () => Promise<DocumentModel[]>;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ documents, refreshDocuments }) => {
