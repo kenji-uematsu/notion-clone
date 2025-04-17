@@ -1,26 +1,12 @@
-.app {
-}
-
 .home-container {
-  height: 100vh;
-  width: 100%;
   overflow: hidden;
-  position: relative; /* 追加 */
+  position: relative;
 }
 
 .main-content {
   flex: 1;
   background-color: #fff;
-  height: 100%;
   overflow-y: auto;
   position: relative; /* 追加 */
   z-index: 1; /* 追加 */
-}
-
-/* サイドバーとメインコンテンツのレイアウト */
-.sidebar {
-}
-
-.editor-textarea {
-  width: 100%;
 }

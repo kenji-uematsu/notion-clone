@@ -76,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ documents, refreshDocuments }) => {
       <hr className="sidebar-divider" />
 
       {/* ドキュメントセクション */}
-      <div className="section-header my-2">
+      <div className="section-header my-2 flex justify-between items-center py-2">
         <h3 className="text-lg">マイドキュメント</h3>
         <button
           onClick={(e) => {

@@ -1,36 +1,6 @@
-.editor {
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 16px;
-  min-height: 400px;
-  font-family: "Arial", sans-serif;
-  font-size: 14px;
-  background-color: #f9f9f9;
-  transition: background-color 0.3s ease;
-}
-
-.editor:focus {
-  outline: none;
-  background-color: #fff;
-}
-
 .editor-content {
-  min-height: 300px;
   line-height: 1.5;
   overflow-y: auto;
-}
-
-.save-status {
-  top: 15px;
-  right: 20px;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  color: #888;
-  user-select: none;
-  z-index: 10; /* z-indexを追加 */
-  pointer-events: none; /* 重要：クリックイベントを通過させる */
 }
 
 .delete-button {

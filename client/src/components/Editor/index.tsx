@@ -145,7 +145,7 @@ const Editor: React.FC<EditorProps> = ({ documentId, onDocumentChange }) => {
           <DeleteIcon />
         </button>
 
-        <div className="save-status flex items-center">
+        <div className="flex items-center text-xs text-gray-500">
           <span>{saveStatus}</span>
         </div>
       </div>

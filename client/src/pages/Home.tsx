@@ -67,20 +67,17 @@ const Home: React.FC = () => {
   if (isLoading) return <div className="loading">Loading...</div>;
 
   return (
-    <div className="home-container flex">
+    <div className="home-container flex h-screen w-full">
       <Sidebar documents={documents} refreshDocuments={loadDocuments} />
-      <main className="main-content flex justify-center">
+      <main className="main-content flex justify-center h-full">
         {id ? (
           <Editor
             documentId={id}
             onDocumentChange={refreshDocuments} // 更新時にリスト再取得
           />
         ) : (
-          <div className="empty-state">
-            <p>
-              👈
-              左のサイドバーからドキュメントを選択するか、新規作成してください
-            </p>
+          <div className="empty-state mt-12">
+            <p>👈 左のサイドバーからドキュメントを新規作成してください</p>
           </div>
         )}
       </main>

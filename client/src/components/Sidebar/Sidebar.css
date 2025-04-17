@@ -1,3 +1,4 @@
+/* サイドバー基本スタイル */
 .sidebar {
   width: 300px;
   background-color: #f5f5f5;
@@ -6,38 +7,19 @@
   padding: 10px;
 }
 
-.sidebar-item {
+/* 追加: ユーザーセクション用のスタイル */
+.user-section {
   margin: 10px 0;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  padding: 5px 0;
 }
 
-.sidebar-item:hover {
-  background-color: #e0e0e0;
-}
-
-.sidebar-header {
-  font-size: 1.5em;
-  margin-bottom: 20px;
-  font-weight: bold;
-}
-
-.sidebar-footer {
-  margin-top: auto;
-  text-align: center;
-  font-size: 0.9em;
-  color: #888;
-}
-
+/* ユーザー情報エリア */
 .user-info {
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid #e0e0e0;
-  pointer-events: auto;
+  padding: 8px 0;
+  margin-bottom: 8px;
 }
 
+/* ユーザーのメールアドレス表示 */
 .user-email {
   font-size: 0.9rem;
   color: #555;
@@ -46,78 +28,26 @@
   white-space: nowrap;
 }
 
-/* 既存のログアウトボタンスタイルを更新 */
-.logout-button {
-  /* width: 100%;
-  padding: 0.75rem;
-  background-color: #2e78c5; 
-  color: white;
+/* 追加: 区切り線のスタイル */
+.sidebar-divider {
   border: none;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  margin-top: 0.75rem;
-  transition: background-color 0.2s;
-  text-align: center; */
+  border-top: 1px solid #e0e0e0;
+  margin: 10px 0;
 }
 
-.logout-button:hover {
-  background-color: #236aaf; /* ホバー時に少し暗い青色 */
-}
-
-.logout-button:active {
-  background-color: #1b5085; /* クリック時にさらに暗い色 */
-}
-
-/* セレクタの具体性を高める */
-.sidebar .user-info .logout-button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #2e78c5;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  margin-top: 0.75rem;
-  transition: background-color 0.2s;
-  text-align: center;
-  position: relative;
-  z-index: 5;
-  display: flex;
-  column-gap: 8px;
-  justify-content: center;
-  align-items: center;
-}
-
-.sidebar .user-info .logout-button:hover {
-  background-color: #236aaf;
-  cursor: pointer;
-}
-
-.sidebar .user-info .logout-button:active {
-  background-color: #1b5085;
-}
-
+/* 追加: セクションヘッダーのスタイル（Tailwindと併用可能） */
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 0;
+  margin: 15px 0 10px 0;
 }
 
-.section-header h3 {
-  margin: 0;
-  color: #777;
-}
-
+/* アイコンボタン（追加ボタンなど） */
 .icon-button {
   background: none;
   border: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border-radius: 3px;
   color: #777;
   padding: 4px;
@@ -133,6 +63,7 @@
   cursor: not-allowed;
 }
 
+/* ドキュメントリスト関連 */
 .document-list {
   margin-bottom: 16px;
 }
@@ -157,11 +88,4 @@
 .document-item.active {
   background-color: rgba(55, 53, 47, 0.16);
   font-weight: 500;
-}
-
-.empty-message {
-  padding: 6px 8px;
-  font-size: 13px;
-  color: #999;
-  font-style: italic;
 }
