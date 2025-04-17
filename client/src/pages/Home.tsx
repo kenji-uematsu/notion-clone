@@ -8,49 +8,73 @@ import "../App.css";
 
 const Home: React.FC = () => {
   const { user } = useAuth();
-  const { id: documentId } = useParams();
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-
-  // 例: Home.tsx内でのURLパラメータ取得
   const { id } = useParams();
-  console.log("現在のドキュメントID:", id);
+  const navigate = useNavigate();
 
-  // ユーザー認証確認と最新ドキュメントへのリダイレクト
+  const [isLoading, setIsLoading] = useState(true);
+  const [documents, setDocuments] = useState<any[]>([]);
+
+  // ドキュメントリストを読み込む関数
+  const loadDocuments = async () => {
+    try {
+      const docs = await fetchDocuments();
+
+      // 作成日時の新しい順にソート
+      const sortedDocs = [...docs].sort((a, b) => {
+        // createdAtが日付文字列の場合
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      });
+
+      setDocuments(sortedDocs);
+      return sortedDocs;
+    } catch (error) {
+      console.error("ドキュメント取得エラー:", error);
+      return [];
+    }
+  };
+
+  // ドキュメント更新後にリストを再読み込みする関数
+  const refreshDocuments = async () => {
+    await loadDocuments();
+  };
+
+  // 初期ロードとリダイレクト
   useEffect(() => {
-    const loadLatestDocument = async () => {
+    const initialLoad = async () => {
       try {
-        // ドキュメント一覧を取得（デフォルトで新しい順）
-        const docs = await fetchDocuments();
+        setIsLoading(true);
+        const docs = await loadDocuments();
 
         // ドキュメントがあり、URLにIDが指定されていない場合
-        if (docs.length > 0 && !documentId) {
+        if (docs.length > 0 && !id) {
           // 最新のドキュメントへリダイレクト
           navigate(`/${docs[0].id}`, { replace: true });
         }
-
-        setIsLoading(false);
       } catch (error) {
-        console.error("ドキュメント取得エラー:", error);
+        console.error("初期ロードエラー:", error);
+      } finally {
         setIsLoading(false);
       }
     };
 
-    if (user && !documentId) {
-      loadLatestDocument();
-    } else if (user) {
-      setIsLoading(false);
+    if (user) {
+      initialLoad();
     }
-  }, [user, documentId, navigate]);
+  }, [user, id, navigate]);
 
   if (isLoading) return <div className="loading">Loading...</div>;
 
   return (
-    <div className="home-container">
-      <Sidebar />
-      <main className="main-content">
-        {documentId ? (
-          <Editor documentId={documentId} />
+    <div className="home-container flex">
+      <Sidebar documents={documents} refreshDocuments={loadDocuments} />
+      <main className="main-content flex justify-center">
+        {id ? (
+          <Editor
+            documentId={id}
+            onDocumentChange={refreshDocuments} // 更新時にリスト再取得
+          />
         ) : (
           <div className="empty-state">
             <p>

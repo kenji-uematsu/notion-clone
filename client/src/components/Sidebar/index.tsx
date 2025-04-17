@@ -1,112 +1,84 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./Sidebar.css";
 // Material UI v4からのアイコンインポート
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AddIcon from "@material-ui/icons/Add";
-import { fetchDocuments, createDocument } from "../../utils/api";
+import { createDocument } from "../../utils/api";
+import { useAuth } from "../../hooks/useAuth"; // 追加：認証フックをインポート
 
-const Sidebar: React.FC = () => {
-  // AuthContextからユーザー情報とログアウト関数を取得
-  const { user, logout } = useAuth();
+interface SidebarProps {
+  documents: any[]; // 親から渡されるドキュメントリスト
+  refreshDocuments: () => Promise<any[]>;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ documents, refreshDocuments }) => {
   const navigate = useNavigate();
   const { id: currentDocId } = useParams(); // 現在表示中のドキュメントIDを取得
-  const [documents, setDocuments] = useState<any[]>([]);
   const [isCreatingDoc, setIsCreatingDoc] = useState(false); // 作成中状態の管理
+  const { user, logout } = useAuth(); // 追加：認証情報を取得
 
-  // ドキュメント一覧の取得
-  const loadDocuments = async () => {
-    try {
-      const docs = await fetchDocuments();
-      setDocuments(docs);
-    } catch (error) {
-      console.error("ドキュメントの取得に失敗しました", error);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      loadDocuments();
-    }
-  }, [user]);
-
-  // ログアウト処理
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate("/login");
-    } catch (error) {
-      console.error("ログアウトに失敗しました", error);
-    }
-  };
-
-  // 新規ドキュメント作成処理
+  // 新規ドキュメント作成処理を修正
   const handleCreateDocument = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // イベント伝播を止める
-    console.log("クリックされました"); // テスト用ログ
+    e.stopPropagation();
+    console.log("クリックされました");
 
     if (isCreatingDoc) return;
 
     try {
       setIsCreatingDoc(true);
-
-      // 新規ドキュメントのデータ
-      const newDocData = {
-        title: "新規",
-        content: "",
-      };
-
-      // APIを呼び出して新規ドキュメントを作成
-      const createdDoc = await createDocument(newDocData);
-      console.log("新規ドキュメントを作成しました:", createdDoc);
+      // 新規ドキュメント作成
+      const createdDoc = await createDocument({ title: "新規", content: "" });
 
       // ドキュメントリストを更新
-      await loadDocuments();
+      await refreshDocuments();
 
-      // 新規作成したドキュメントに移動（オプション）
+      // 新規作成したドキュメントに移動
       navigate(`/${createdDoc.id}`);
     } catch (error) {
-      console.error("ドキュメント作成に失敗しました:", error);
+      console.error("ドキュメント作成エラー:", error);
     } finally {
       setIsCreatingDoc(false);
     }
   };
 
-  // ドキュメント選択ハンドラを修正
-  const handleDocumentClick = (docId: number) => {
-    navigate(`/${docId}`); // `/documents/${docId}` から変更
+  // 追加：ログアウト処理
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("ログアウトエラー:", error);
+    }
   };
 
   // JSX
   return (
     <div className="sidebar">
-      <h2>Notion Clone</h2>
+      <h2 className="text-4xl font-bold">Notion Clone</h2>
 
-      {/* ユーザー情報 */}
-      <div className="user-info">
-        {user ? (
-          <>
-            <div className="user-email">{user.email}</div>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleLogout();
-              }}
-              className="logout-button"
-            >
-              <ExitToAppIcon /> ログアウト
-            </button>
-          </>
-        ) : (
-          <div className="user-email">未ログイン</div>
-        )}
+      {/* 追加：ユーザー情報とログアウトボタン */}
+      <div className="user-section">
+        <div className="user-info">
+          {user && <p className="user-email">{user.email}</p>}
+        </div>
+        <button
+          className="w-full px-4 py-2 mt-2 text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200"
+          onClick={handleLogout}
+        >
+          <div className="flex items-center justify-center">
+            <ExitToAppIcon fontSize="small" className="mr-2" />
+            <span>ログアウト</span>
+          </div>
+        </button>
       </div>
 
+      {/* 追加：区切り線 */}
+      <hr className="sidebar-divider" />
+
       {/* ドキュメントセクション */}
-      <div className="section-header">
-        <h3>マイドキュメント</h3>
+      <div className="section-header my-2">
+        <h3 className="text-lg">マイドキュメント</h3>
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -121,21 +93,17 @@ const Sidebar: React.FC = () => {
 
       {/* ドキュメントリスト */}
       <div className="document-list">
-        {documents.length > 0 ? (
-          documents.map((doc) => (
-            <div
-              key={doc.id}
-              className={`document-item ${
-                doc.id.toString() === currentDocId ? "active" : ""
-              }`}
-              onClick={() => handleDocumentClick(doc.id)}
-            >
-              {doc.title}
-            </div>
-          ))
-        ) : (
-          <div className="empty-message">ドキュメントがありません</div>
-        )}
+        {documents.map((doc) => (
+          <div
+            key={doc.id}
+            className={`document-item ${
+              doc.id.toString() === currentDocId ? "active" : ""
+            }`}
+            onClick={() => navigate(`/${doc.id}`)}
+          >
+            {doc.title || "無題"}
+          </div>
+        ))}
       </div>
     </div>
   );

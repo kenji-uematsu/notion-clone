@@ -99,6 +99,7 @@ export const deleteDocument = async (documentId: string) => {
   try {
     await authAxios.delete(`/documents/${documentId}`);
   } catch (error) {
+    console.error("ドキュメント削除エラー:", error);
     throw new Error("ドキュメントの削除に失敗しました");
   }
 };

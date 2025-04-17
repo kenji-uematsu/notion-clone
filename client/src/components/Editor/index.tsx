@@ -1,57 +1,64 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
-import { fetchDocument, updateDocument } from "../../utils/api";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom"; // useNavigateを追加
+import { fetchDocument, updateDocument, deleteDocument } from "../../utils/api"; // deleteDocumentを追加
+import DeleteIcon from "@material-ui/icons/Delete";
 import "./Editor.css";
 
 interface EditorProps {
   documentId?: string;
+  onDocumentChange?: () => Promise<void>;
 }
 
-const Editor: React.FC<EditorProps> = ({ documentId }) => {
-  // URLからドキュメントIDを取得
+const Editor: React.FC<EditorProps> = ({ documentId, onDocumentChange }) => {
   const params = useParams();
+  const navigate = useNavigate(); // ナビゲーション用
   const currentDocId = documentId || params.id;
 
-  // 状態管理
+  const isMounted = useRef(true);
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState("保存済み");
   const [error, setError] = useState("");
 
-  // ドキュメントの読み込み
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
   useEffect(() => {
     const loadDocument = async () => {
       if (!currentDocId) {
-        setLoading(false);
+        if (isMounted.current) setLoading(false);
         return;
       }
 
       try {
-        setLoading(true);
+        if (isMounted.current) setLoading(true);
         console.log("ドキュメント読み込み開始:", currentDocId);
 
-        // APIを使って個別ドキュメントを取得
         const doc = await fetchDocument(currentDocId);
         console.log("取得したドキュメント:", doc);
 
-        if (doc) {
-          // 取得したデータをステートにセット
+        if (isMounted.current && doc) {
           setTitle(doc.title || "");
           setContent(doc.content || "");
+          setLoading(false);
         }
       } catch (err) {
         console.error("ドキュメント読み込みエラー:", err);
-        setError("ドキュメントの読み込みに失敗しました");
-      } finally {
-        setLoading(false);
+        if (isMounted.current) {
+          setError("ドキュメントの読み込みに失敗しました");
+          setLoading(false);
+        }
       }
     };
 
     loadDocument();
   }, [currentDocId]);
 
-  // 自動保存のためのdebounce関数
   const debounce = (func: Function, delay: number) => {
     let timeoutId: NodeJS.Timeout;
     return (...args: any[]) => {
@@ -60,29 +67,30 @@ const Editor: React.FC<EditorProps> = ({ documentId }) => {
     };
   };
 
-  // 変更を保存する関数
   const saveChanges = async (newTitle: string, newContent: string) => {
     if (!currentDocId) return;
 
     try {
-      setSaveStatus("保存中...");
+      if (isMounted.current) setSaveStatus("保存中...");
       await updateDocument(currentDocId, {
         title: newTitle,
         content: newContent,
       });
-      setSaveStatus("保存済み");
+      if (isMounted.current) setSaveStatus("保存済み");
+
+      if (onDocumentChange) {
+        await onDocumentChange();
+      }
     } catch (err) {
       console.error("保存エラー:", err);
-      setSaveStatus("保存に失敗しました");
+      if (isMounted.current) setSaveStatus("保存に失敗しました");
     }
   };
 
-  // デバウンスした保存関数
   const debouncedSave = useCallback(debounce(saveChanges, 1000), [
     currentDocId,
   ]);
 
-  // タイトルの変更ハンドラ
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
     setTitle(newTitle);
@@ -90,7 +98,6 @@ const Editor: React.FC<EditorProps> = ({ documentId }) => {
     debouncedSave(newTitle, content);
   };
 
-  // コンテンツの変更ハンドラ
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     setContent(newContent);
@@ -98,36 +105,68 @@ const Editor: React.FC<EditorProps> = ({ documentId }) => {
     debouncedSave(title, newContent);
   };
 
-  // 読み込み中表示
+  const handleDeleteDocument = async () => {
+    if (!currentDocId) return;
+
+    if (window.confirm("このドキュメントを削除しますか？")) {
+      try {
+        if (isMounted.current) setSaveStatus("削除中...");
+
+        await deleteDocument(currentDocId);
+
+        console.log("ドキュメント削除完了:", currentDocId);
+
+        if (onDocumentChange) {
+          await onDocumentChange();
+        }
+
+        navigate("/");
+      } catch (err) {
+        console.error("ドキュメント削除エラー:", err);
+        if (isMounted.current) {
+          setError("ドキュメントの削除に失敗しました");
+          setSaveStatus("エラー");
+        }
+      }
+    }
+  };
+
   if (loading) {
     return <div className="editor-loading">読み込み中...</div>;
   }
 
-  // エラー表示
   if (error) {
     return <div className="editor-error">{error}</div>;
   }
 
   return (
-    <div className="notion-editor">
-      {/* 保存状態の表示 */}
-      <div className="save-status">{saveStatus}</div>
+    <div className="notion-editor px-4 w-32 md:w-96 lg:w-1/2">
+      <div className="editor-header flex justify-between py-4">
+        <button
+          className="delete-button flex items-center justify-center"
+          onClick={handleDeleteDocument}
+        >
+          <DeleteIcon />
+        </button>
 
-      {/* タイトル入力 */}
+        <div className="save-status flex items-center">
+          <span>{saveStatus}</span>
+        </div>
+      </div>
+
       <input
         type="text"
-        className="editor-title"
+        className="editor-title w-full my-4 text-4xl font-bold"
         value={title}
         onChange={handleTitleChange}
-        placeholder="無題"
+        placeholder="新規ページ"
       />
 
-      {/* 本文入力 */}
       <textarea
-        className="editor-content"
+        className="editor-content w-full my-4"
         value={content}
         onChange={handleContentChange}
-        placeholder="ここに本文を入力..."
+        placeholder="本文を入力してください"
       />
     </div>
   );
