@@ -1,8 +1,9 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { api } from "../utils/api";
+import User from "../types/user";
 
 interface AuthContextType {
-  user: any | null;
+  user: User | null;
   login: (email: string, password: string) => Promise<any>;
   signup: (email: string, password: string) => Promise<any>;
   logout: () => void;

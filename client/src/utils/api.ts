@@ -1,4 +1,6 @@
 import axios, { AxiosError, isAxiosError } from "axios";
+import DocumentModel from "../types/document";
+import User from "../types/user";
 
 const API_BASE_URL = `http://localhost:${
   process.env.REACT_APP_API_PORT || "3001"
@@ -20,15 +22,6 @@ authAxios.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
-export interface Document {
-  id: number | string;
-  title: string;
-  content: string;
-  userId: number | string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 // 認証関連のAPI
 export const loginUser = async (credentials: {
@@ -72,7 +65,7 @@ export const fetchDocuments = async () => {
   }
 };
 
-export const createDocument = async (documentData: Partial<Document>) => {
+export const createDocument = async (documentData: Partial<DocumentModel>) => {
   try {
     const response = await authAxios.post("/documents", documentData);
     return response.data;
@@ -84,7 +77,7 @@ export const createDocument = async (documentData: Partial<Document>) => {
 
 export const updateDocument = async (
   documentId: string | number,
-  documentData: Partial<Document>
+  documentData: Partial<DocumentModel>
 ) => {
   try {
     const response = await authAxios.put(

@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Editor from "../components/Editor";
 import { fetchDocuments } from "../utils/api";
-import { Document } from "../utils/api"; // 型をインポート
+import DocumentModel from "../types/document";
 import "../App.css";
 
 const Home: React.FC = () => {
@@ -14,7 +14,7 @@ const Home: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documents, setDocuments] = useState<DocumentModel[]>([]);
 
   // ドキュメントリストを読み込む関数
   const loadDocuments = async () => {
