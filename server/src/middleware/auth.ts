@@ -2,13 +2,16 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error("JWT_SECRETが設定されていません。サーバーを停止します。");
+  process.exit(1);
+}
 
-// Requestインターフェースを拡張してuserプロパティを追加
 declare global {
   namespace Express {
     interface Request {
-      user?: any; // 実際のUserモデルの型に合わせて調整
+      user?: any;
     }
   }
 }

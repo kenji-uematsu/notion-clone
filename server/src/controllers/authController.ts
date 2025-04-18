@@ -3,7 +3,11 @@ import User from "../models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error("JWT_SECRETが設定されていません。サーバーを停止します。");
+  process.exit(1);
+}
 
 // ユーザー登録
 export const register = async (req: Request, res: Response) => {
@@ -26,7 +30,7 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Email already in use" });
     }
 
-    // 新しいユーザーを作成 (usernameフィールドなし)
+    // 新しいユーザーを作成
     const user = await User.create({ email, password });
 
     // JWTトークンを生成
