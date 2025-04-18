@@ -11,18 +11,18 @@ The project is divided into two main parts: the client and the server.
 The client is built using React and TypeScript. It includes the following key components:
 
 - **Components**: Reusable UI components such as Editor, Sidebar, and Navbar.
-- **Pages**: Different pages of the application including Home, Workspace, and Document.
-- **Hooks**: Custom hooks for authentication and managing workspaces and documents.
-- **Context**: Context providers for managing global state related to authentication and workspaces.
+- **Pages**: Different pages of the application including Home and Document views.
+- **Hooks**: Custom hooks for authentication and managing documents.
+- **Context**: Context providers for managing global state related to authentication and user data.
 - **Utils**: Utility functions for API calls and other helper functions.
 
 ### Server
 
 The server is built using Node.js and Express. It includes:
 
-- **Controllers**: Handle the business logic for authentication, documents, and workspaces.
-- **Models**: Define the data structure for users, documents, and workspaces.
-- **Routes**: Define the API endpoints for authentication, documents, and workspaces.
+- **Controllers**: Handle the business logic for authentication and documents.
+- **Models**: Define the data structure for users and documents.
+- **Routes**: Define the API endpoints for authentication and documents.
 - **Middleware**: Custom middleware for authentication and error handling.
 - **Config**: Configuration files for database connection and other settings.
 
@@ -93,7 +93,6 @@ Make sure to replace the values with your actual configuration. Do not commit th
 
 - User authentication (login and signup)
 - Create, read, update, and delete documents
-- Organize documents into workspaces
 - Responsive design for various screen sizes
 
 ## Technologies Used
@@ -108,7 +107,3 @@ Make sure to replace the values with your actual configuration. Do not commit th
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for more details.
-
-```
-
-```
