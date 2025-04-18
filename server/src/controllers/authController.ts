@@ -2,12 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-  console.error("JWT_SECRETが設定されていません。サーバーを停止します。");
-  process.exit(1);
-}
+import { JWT_SECRET } from "../config/jwt";
 
 // ユーザー登録
 export const register = async (req: Request, res: Response) => {
@@ -32,6 +27,11 @@ export const register = async (req: Request, res: Response) => {
 
     // 新しいユーザーを作成
     const user = await User.create({ email, password });
+
+    // JWT_SECRETが設定されているか確認
+    if (!JWT_SECRET) {
+      throw new Error("JWT secret is not defined");
+    }
 
     // JWTトークンを生成
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "24h" });
@@ -62,9 +62,9 @@ export const login = async (req: Request, res: Response) => {
 
     // パスワードを検証
     const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid credentials" });
+    // JWT_SECRETが設定されているか確認
+    if (!JWT_SECRET) {
+      throw new Error("JWT secret is not defined");
     }
 
     // JWTトークンを生成

@@ -1,12 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
-
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-  console.error("JWT_SECRETが設定されていません。サーバーを停止します。");
-  process.exit(1);
-}
+import { JWT_SECRET } from "../config/jwt";
 
 declare global {
   namespace Express {
@@ -27,7 +22,10 @@ export const authenticateToken = async (
   if (!token) return res.status(401).json({ message: "認証が必要です" });
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: number };
+    if (!JWT_SECRET) {
+      return res.status(500).json({ message: "Server configuration error" });
+    }
+    const decoded = jwt.verify(token, JWT_SECRET) as unknown as { id: number };
     const user = await User.findByPk(decoded.id);
 
     if (!user) {
