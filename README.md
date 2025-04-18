@@ -93,7 +93,10 @@ Make sure to replace the values with your actual configuration. Do not commit th
 
 - User authentication (login and signup)
 - Create, read, update, and delete documents
-- Responsive design for various screen sizes
+- JWT-based secure authentication
+- MySQL database with Sequelize ORM
+- Express.js API with TypeScript
+- React.js frontend with TypeScript
 
 ## Technologies Used
 
