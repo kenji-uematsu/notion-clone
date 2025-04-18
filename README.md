@@ -73,6 +73,22 @@ To get started with the project, follow these steps:
    npm start
    ```
 
+## Setup Environment Variables
+
+Create a `.env` file in the server directory with the following variables:
+
+```
+DB_PORT=3306
+JWT_SECRET=your_jwt_secret_key
+DB_HOST=localhost
+DB_USER=notion_user
+DB_PASSWORD=password123
+DB_NAME=notion_clone
+REACT_APP_API_PORT=3001
+```
+
+Make sure to replace the values with your actual configuration. Do not commit this file to version control.
+
 ## Features
 
 - User authentication (login and signup)
@@ -82,12 +98,17 @@ To get started with the project, follow these steps:
 
 ## Technologies Used
 
-- React
-- TypeScript
-- Node.js
-- Express
-- MongoDB (or any other database of your choice)
+- **Frontend**: React, TypeScript, Axios
+- **Backend**: Node.js, Express, TypeScript
+- **Database**: MySQL with Sequelize ORM
+- **Authentication**: JSON Web Tokens (JWT)
+- **Validation**: express-validator
+- **Security**: bcrypt for password hashing
 
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for more details.
+
+```
+
+```
